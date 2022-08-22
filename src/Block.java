@@ -1,4 +1,5 @@
 import java.security.MessageDigest;
+import java.sql.Timestamp;
 import java.nio.charset.StandardCharsets;
 
 
@@ -7,20 +8,19 @@ public class Block
 	private String hash ;
 	private String previousHash;
 	private String data ;
-	private long timeStamp ;
+	private Timestamp timeStamp ;
 	private int nonce ;
 	
-	public Block(String data, String previousHash, long timeStamp) {
+	public Block(String data, String previousHash) {
 		this.data = data ;
 		this.previousHash = previousHash ;
-		this.timeStamp = timeStamp ;
-		this.nonce = 0 ;
+		this.timeStamp = new Timestamp(System.currentTimeMillis());
 		this.hash = calculateBlockHash() ;
 	}
 	
 	public String calculateBlockHash() {
 		String dataToHash = this.previousHash + 
-				Long.toString(this.timeStamp) + 
+				this.timeStamp.toString() + 
 				Integer.toString(this.nonce) +
 				this.data ;
 		MessageDigest digest = null ;
@@ -39,6 +39,7 @@ public class Block
 	}
 	
 	public String mineBlock(int prefix) {
+		nonce = 0 ;
 	    String prefixString = new String(new char[prefix]).replace('\0', '0');
 	    while (!hash.substring(0, prefix).equals(prefixString)) {
 	        nonce++;
@@ -71,11 +72,11 @@ public class Block
 		this.data = data;
 	}
 
-	public long getTimeStamp() {
+	public Timestamp getTimeStamp() {
 		return timeStamp;
 	}
 
-	public void setTimeStamp(long timeStamp) {
+	public void setTimeStamp(Timestamp timeStamp) {
 		this.timeStamp = timeStamp;
 	}
 
