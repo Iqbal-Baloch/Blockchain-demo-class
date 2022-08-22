@@ -1,6 +1,6 @@
 import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Logger;
+
 
 public class Block 
 {
@@ -14,6 +14,7 @@ public class Block
 		this.data = data ;
 		this.previousHash = previousHash ;
 		this.timeStamp = timeStamp ;
+		this.nonce = 0 ;
 		this.hash = calculateBlockHash() ;
 	}
 	
@@ -35,6 +36,15 @@ public class Block
 	        buffer.append(String.format("%02x", b));
 	    }
 	    return buffer.toString();
+	}
+	
+	public String mineBlock(int prefix) {
+	    String prefixString = new String(new char[prefix]).replace('\0', '0');
+	    while (!hash.substring(0, prefix).equals(prefixString)) {
+	        nonce++;
+	        hash = calculateBlockHash();
+	    }
+	    return hash;
 	}
 
 	public String getHash() {
